@@ -1,12 +1,18 @@
 # Philter SDK for Golang
 
-The **Philter SDK for Golang** enables Go developers to easily work with Philter. [Philter](https://www.mtnfog.com/products/philter/) identifies and manipulates sensitive information like Protected Health Information (PHI) and personally identifiable information (PII) from natural language text. 
+The **Philter SDK for Golang** enables Go developers to easily work with Philter. [Philter](https://www.mtnfog.com/products/philter/) identifies and manipulates sensitive information like Protected Health Information (PHI) and personally identifiable information (PII) from natural language text.
+
+Refer to [Philter API](https://philter.mtnfog.com/api/) documentation for details on the methods available.
 
 [![Build Status](https://travis-ci.org/mtnfog/philter-sdk-golang.svg?branch=master)](https://travis-ci.org/mtnfog/philter-sdk-golang)
 
-## Usage
+## Installation
 
 `go get https://github.com/mtnfog/philter-sdk-golang`
+
+## Example Usage
+
+With an available running instance of Philter, to filter text:
 
 To filter text:
 
