@@ -26,29 +26,49 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 )
 
 type StatusResponse struct {
-	status string `json:"status"`
-	version string `json:"version"`
+	Status  string `json:"status"`
+	Version string `json:"version"`
 }
 
 type FilterResponse struct {
-	FilteredText string	`json:"filteredText"`
-	Context	string `json:"context"`
-	DocumentId string `json:"documentId"`
+	FilteredText string `json:"filteredText"`
+	Context      string `json:"context"`
+	DocumentId   string `json:"documentId"`
 }
 
 type ExplainResponse struct {
-	FilteredText string	`json:"filteredText"`
-	Context	string `json:"context"`
-	DocumentId string `json:"documentId"`
+	FilteredText string      `json:"filteredText"`
+	Context      string      `json:"context"`
+	DocumentId   string      `json:"documentId"`
+	Explanation  Explanation `json:"explanation"`
 }
 
-func Status() StatusResponse {
+type Explanation struct {
+	AppliedSpans []Span `json:"appliedSpans"`
+	IgnoredSpans []Span `json:"ignoredSpans"`
+}
 
-	response, err := http.Get("https://localhost:8080/api/status")
+type Span struct {
+	Id             string  `json:"id"`
+	CharacterStart int     `json:"characterStart"`
+	CharacterEnd   int     `json:"characterEnd"`
+	FilterType     string  `json:"filterType"`
+	Context        string  `json:"context"`
+	DocumentId     string  `json:"documentId"`
+	Confidence     float64 `json:"confidence"`
+	Text           string  `json:"text"`
+	Replacement    string  `json:"replacement"`
+	Ignored        bool    `json:"ignored"`
+}
+
+func Status(endpoint string) StatusResponse {
+
+	response, err := http.Get(endpoint + "/api/status")
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -56,6 +76,7 @@ func Status() StatusResponse {
 	}
 
 	responseData, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 
 	if err != nil {
 		log.Fatal(err)
@@ -68,18 +89,30 @@ func Status() StatusResponse {
 
 }
 
-func Filter(input string, context string, documentId string, filterProfile string) FilterResponse {
+func Filter(endpoint string, input string, context string, documentId string, filterProfile string) FilterResponse {
 
 	var text = []byte(input)
-	response, err := http.Post("https://localhost:8080/api/filter", "text/plain", bytes.NewBuffer(text))
+
+	base, err := url.Parse(endpoint + "/api/filter")
 
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 
+	params := url.Values{}
+	params.Add("c", context)
+	params.Add("d", documentId)
+	params.Add("p", filterProfile)
+
+	base.RawQuery = params.Encode()
+
+	response, err := http.Post(base.String(), "text/plain", bytes.NewBuffer(text))
+
 	documentId = response.Header.Get("x-document-id")
+
 	responseData, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 
 	if err != nil {
 		log.Fatal(err)
@@ -89,26 +122,38 @@ func Filter(input string, context string, documentId string, filterProfile strin
 
 }
 
-func Explain(input string, context string, documentId string, filterProfile string) ExplainResponse {
+func Explain(endpoint string, input string, context string, documentId string, filterProfile string) ExplainResponse {
 
 	var text = []byte(input)
-	response, err := http.Post("https://localhost:8080/api/explain", "text/plain", bytes.NewBuffer(text))
+
+	base, err := url.Parse(endpoint + "/api/explain")
 
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
+	params := url.Values{}
+	params.Add("c", context)
+	params.Add("d", documentId)
+	params.Add("p", filterProfile)
+
+	base.RawQuery = params.Encode()
+
+	response, err := http.Post(base.String(), "text/plain", bytes.NewBuffer(text))
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err.Error())
+		os.Exit(1)
 	}
 
-	var responseObject ExplainResponse
-	json.Unmarshal(responseData, &responseObject)
+	responseData, _ := ioutil.ReadAll(response.Body)
+	response.Body.Close()
 
-	return responseObject
+	var explainResponse ExplainResponse
+	json.Unmarshal(responseData, &explainResponse)
+
+	return explainResponse
 
 }
 
