@@ -8,7 +8,7 @@ The **Philter SDK for Golang** enables Go developers to easily work with Philter
 
 ## Usage
 
-TBD
+`go get https://github.com/mtnfog/philter-sdk-golang`
 
 ## License
 
