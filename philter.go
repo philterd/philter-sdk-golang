@@ -109,14 +109,19 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 
 	response, err := http.Post(base.String(), "text/plain", bytes.NewBuffer(text))
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	documentId = response.Header.Get("x-document-id")
 
 	responseData, err := ioutil.ReadAll(response.Body)
-	response.Body.Close()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	response.Body.Close()
 
 	return FilterResponse{FilteredText:string(responseData), Context:context, DocumentId:documentId}
 

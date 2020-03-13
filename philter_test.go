@@ -1,12 +1,16 @@
 package philter
 
 import (
+	"crypto/tls"
+	"net/http"
 	"testing"
 )
 
 func TestFilter(t *testing.T) {
 
-	filterResponse := Filter("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	filterResponse := Filter("https://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
 
 	if filterResponse.FilteredText != "His SSN was {{{REDACTED-ssn}}}." {
 		t.Fail()
@@ -16,7 +20,9 @@ func TestFilter(t *testing.T) {
 
 func TestExplain(t *testing.T) {
 
-	explainResponse := Explain("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	explainResponse := Explain("https://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
 
 	if explainResponse.FilteredText != "His SSN was {{{REDACTED-ssn}}}." {
 		t.Fail()
@@ -26,7 +32,9 @@ func TestExplain(t *testing.T) {
 
 func TestStatus(t *testing.T) {
 
-	statusResponse := Status("http://localhost:8080")
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+	statusResponse := Status("https://localhost:8080")
 
 	if statusResponse.Status != "Healthy" {
 		if statusResponse.Status != "Unhealthy" {
