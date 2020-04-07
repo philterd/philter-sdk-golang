@@ -17,13 +17,13 @@ With an available running instance of Philter, to filter text:
 To filter text:
 
 ```
-filterResponse := Filter("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
+filterResponse := Filter("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default", "token")
 ```
 
 To filter with explanation:
 
 ```
-explainResponse := Explain("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default")
+explainResponse := Explain("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default", "token")
 ```
 
 ## License
