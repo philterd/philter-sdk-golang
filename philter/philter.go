@@ -89,7 +89,7 @@ func Status(endpoint string) StatusResponse {
 
 }
 
-func Filter(endpoint string, input string, context string, documentId string, filterProfile string) FilterResponse {
+func Filter(endpoint string, input string, context string, documentId string, filterProfile string, token string) FilterResponse {
 
 	var text = []byte(input)
 
@@ -107,11 +107,21 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 
 	base.RawQuery = params.Encode()
 
-	response, err := http.Post(base.String(), "text/plain", bytes.NewBuffer(text))
+	request, err := http.NewRequest("POST", base.String(), bytes.NewReader(text))
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Print(err.Error())
+		os.Exit(1)
 	}
+
+	request.Header.Add("Content-Type", "text/plain")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 
 	documentId = response.Header.Get("x-document-id")
 
@@ -127,7 +137,7 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 
 }
 
-func Explain(endpoint string, input string, context string, documentId string, filterProfile string) ExplainResponse {
+func Explain(endpoint string, input string, context string, documentId string, filterProfile string, token string) ExplainResponse {
 
 	var text = []byte(input)
 
@@ -145,7 +155,21 @@ func Explain(endpoint string, input string, context string, documentId string, f
 
 	base.RawQuery = params.Encode()
 
-	response, err := http.Post(base.String(), "text/plain", bytes.NewBuffer(text))
+	request, err := http.NewRequest("POST", base.String(), bytes.NewReader(text))
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	request.Header.Add("Content-Type", "text/plain")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 
 	if err != nil {
 		fmt.Print(err.Error())

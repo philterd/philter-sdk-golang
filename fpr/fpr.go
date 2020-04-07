@@ -34,9 +34,21 @@ type StatusResponse struct {
 	Version string `json:"version"`
 }
 
-func GetFilterProfileNames(endpoint string) []string {
+func GetFilterProfileNames(endpoint string, token string) []string {
 
-	response, err := http.Get(endpoint + "/api/profiles")
+	request, err := http.NewRequest("GET", endpoint + "/api/profiles", nil)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -57,9 +69,21 @@ func GetFilterProfileNames(endpoint string) []string {
 
 }
 
-func GetFilterProfile(endpoint string, name string) string {
+func GetFilterProfile(endpoint string, name string, token string) string {
 
-	response, err := http.Get(endpoint + "/api/profiles/" + name)
+	request, err := http.NewRequest("GET", endpoint + "/api/profiles/" + name, nil)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -77,15 +101,20 @@ func GetFilterProfile(endpoint string, name string) string {
 
 }
 
-func UploadFilterProfile(endpoint string, name string, content string) bool {
+func UploadFilterProfile(endpoint string, name string, content string, token string) bool {
 
 	var json = []byte(content)
-	req, err := http.NewRequest("POST", endpoint + "/api/profiles", bytes.NewBuffer(json))
-	req.Header.Set("Content-Type", "application/json")
+	request, err := http.NewRequest("POST", endpoint + "/api/profiles", bytes.NewBuffer(json))
+
+	request.Header.Set("Content-Type", "application/json")
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
 
 	client := &http.Client{}
 
-	resp, err := client.Do(req)
+	resp, err := client.Do(request)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -102,13 +131,17 @@ func UploadFilterProfile(endpoint string, name string, content string) bool {
 
 }
 
-func DeleteFilterProfile(endpoint string, name string, content string) bool {
+func DeleteFilterProfile(endpoint string, name string, content string, token string) bool {
 
-	req, err := http.NewRequest("DELETE", endpoint + "/api/profiles", nil)
+	request, err := http.NewRequest("DELETE", endpoint + "/api/profiles", nil)
 
 	client := &http.Client{}
 
-	resp, err := client.Do(req)
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	resp, err := client.Do(request)
 
 	if err != nil {
 		fmt.Print(err.Error())
