@@ -26,6 +26,11 @@ To filter with explanation:
 explainResponse := Explain("http://localhost:8080", "His SSN was 123-45-6789.", "context", "docid", "default", "token")
 ```
 
+## Release History
+
+* 1.1.0 - Adds authentication support.
+* 1.0.0 - Initial release.
+
 ## License
 
 This project is licensed under the Apache Software License, version 2.0.
