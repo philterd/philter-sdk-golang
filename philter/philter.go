@@ -187,3 +187,126 @@ func Explain(endpoint string, input string, context string, documentId string, f
 
 }
 
+func GetFilterProfileNames(endpoint string, token string) []string {
+
+	request, err := http.NewRequest("GET", endpoint + "/api/profiles", nil)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var responseObject []string
+	json.Unmarshal(responseData, &responseObject)
+
+	return responseObject
+
+}
+
+func GetFilterProfile(endpoint string, name string, token string) string {
+
+	request, err := http.NewRequest("GET", endpoint + "/api/profiles/" + name, nil)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	response.Body.Close()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(responseData)
+
+}
+
+func UploadFilterProfile(endpoint string, name string, content string, token string) bool {
+
+	var json = []byte(content)
+	request, err := http.NewRequest("POST", endpoint + "/api/profiles", bytes.NewBuffer(json))
+
+	request.Header.Set("Content-Type", "application/json")
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	client := &http.Client{}
+
+	resp, err := client.Do(request)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	resp.Body.Close()
+
+	if resp.StatusCode == 200 {
+		return true
+	} else {
+		return false
+	}
+
+}
+
+func DeleteFilterProfile(endpoint string, name string, content string, token string) bool {
+
+	request, err := http.NewRequest("DELETE", endpoint + "/api/profiles", nil)
+
+	client := &http.Client{}
+
+	if token != "" {
+		request.Header.Add("Authorization", "token:" + token)
+	}
+
+	resp, err := client.Do(request)
+
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	resp.Body.Close()
+
+	if resp.StatusCode == 200 {
+		return true
+	} else {
+		return false
+	}
+
+}
