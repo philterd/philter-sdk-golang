@@ -63,6 +63,7 @@ type Span struct {
 	Confidence     float64 `json:"confidence"`
 	Text           string  `json:"text"`
 	Replacement    string  `json:"replacement"`
+	Salt           string  `json:"salt"`
 	Ignored        bool    `json:"ignored"`
 }
 
