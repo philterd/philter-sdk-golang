@@ -8,7 +8,7 @@ Refer to [Philter API](https://philter.mtnfog.com/api/) documentation for detail
 
 ## Installation
 
-`go get https://github.com/mtnfog/philter-sdk-golang/philter`
+`go get github.com/mtnfog/philter-sdk-golang/philter`
 
 ## Example Usage
 
