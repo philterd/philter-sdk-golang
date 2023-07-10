@@ -120,7 +120,7 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 	client := &http.Client{}
 	response, err := client.Do(request)
 
-	documentId = response.Header.Get("x-document-id")
+	documentId = "empty" // response.Header.Get("x-document-id")
 
 	responseData, err := ioutil.ReadAll(response.Body)
 
