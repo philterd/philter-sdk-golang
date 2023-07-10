@@ -90,7 +90,7 @@ func Status(endpoint string) StatusResponse {
 
 }
 
-func Filter(endpoint string, input string, context string, documentId string, filterProfile string, token string) FilterResponse {
+func Filter(endpoint string, input string, context string, documentId string, filterProfile string) FilterResponse {
 
 	var text = []byte(input)
 
@@ -109,10 +109,6 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 	base.RawQuery = params.Encode()
 
 	request, err := http.NewRequest("POST", base.String(), bytes.NewReader(text))
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
-	}
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -138,7 +134,7 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 
 }
 
-func Explain(endpoint string, input string, context string, documentId string, filterProfile string, token string) ExplainResponse {
+func Explain(endpoint string, input string, context string, documentId string, filterProfile string) ExplainResponse {
 
 	var text = []byte(input)
 
@@ -157,10 +153,6 @@ func Explain(endpoint string, input string, context string, documentId string, f
 	base.RawQuery = params.Encode()
 
 	request, err := http.NewRequest("POST", base.String(), bytes.NewReader(text))
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
-	}
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -187,17 +179,13 @@ func Explain(endpoint string, input string, context string, documentId string, f
 
 }
 
-func GetFilterProfileNames(endpoint string, token string) []string {
+func GetFilterProfileNames(endpoint string) []string {
 
 	request, err := http.NewRequest("GET", endpoint + "/api/profiles", nil)
 
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
-	}
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
 	}
 
 	client := &http.Client{}
@@ -222,17 +210,13 @@ func GetFilterProfileNames(endpoint string, token string) []string {
 
 }
 
-func GetFilterProfile(endpoint string, name string, token string) string {
+func GetFilterProfile(endpoint string, name string) string {
 
 	request, err := http.NewRequest("GET", endpoint + "/api/profiles/" + name, nil)
 
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
-	}
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
 	}
 
 	client := &http.Client{}
@@ -254,16 +238,12 @@ func GetFilterProfile(endpoint string, name string, token string) string {
 
 }
 
-func UploadFilterProfile(endpoint string, name string, content string, token string) bool {
+func UploadFilterProfile(endpoint string, name string, content string) bool {
 
 	var json = []byte(content)
 	request, err := http.NewRequest("POST", endpoint + "/api/profiles", bytes.NewBuffer(json))
 
 	request.Header.Set("Content-Type", "application/json")
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
-	}
 
 	client := &http.Client{}
 
@@ -284,15 +264,11 @@ func UploadFilterProfile(endpoint string, name string, content string, token str
 
 }
 
-func DeleteFilterProfile(endpoint string, name string, content string, token string) bool {
+func DeleteFilterProfile(endpoint string, name string, content string) bool {
 
 	request, err := http.NewRequest("DELETE", endpoint + "/api/profiles", nil)
 
 	client := &http.Client{}
-
-	if token != "" {
-		request.Header.Add("Authorization", "token:" + token)
-	}
 
 	resp, err := client.Do(request)
 
