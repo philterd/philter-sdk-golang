@@ -1,3 +1,3 @@
-module philterd/philter-sdk-golang
+module github.com/philterd/philter-sdk-golang
 
 go 1.20
