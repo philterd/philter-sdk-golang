@@ -6,7 +6,7 @@ Refer to [Philter API](https://docs.philterd.ai/philter/api/) documentation for 
 
 ## Installation
 
-`go get github.com/mtnfog/philter-sdk-golang/philter`
+`go get github.com/philterd/philter-sdk-golang`
 
 ## Example Usage
 
