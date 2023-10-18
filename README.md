@@ -26,6 +26,7 @@ explainResponse := Explain("http://localhost:8080", "His SSN was 123-45-6789.", 
 
 ## Release History
 
+* 1.2.0 - Renames `filterProfile` to `policy`.
 * 1.1.0 - Adds authentication support.
 * 1.0.0 - Initial release.
 
