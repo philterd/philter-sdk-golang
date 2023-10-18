@@ -1,4 +1,6 @@
 /*
+ * Copyright 2023 Philterd, LLC.
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
  * distributed with this work for additional information
@@ -90,7 +92,7 @@ func Status(endpoint string) StatusResponse {
 
 }
 
-func Filter(endpoint string, input string, context string, documentId string, filterProfile string) FilterResponse {
+func Filter(endpoint string, input string, context string, documentId string, policy string) FilterResponse {
 
 	var text = []byte(input)
 
@@ -104,7 +106,7 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 	params := url.Values{}
 	params.Add("c", context)
 	params.Add("d", documentId)
-	params.Add("p", filterProfile)
+	params.Add("p", policy)
 
 	base.RawQuery = params.Encode()
 
@@ -130,11 +132,11 @@ func Filter(endpoint string, input string, context string, documentId string, fi
 
 	response.Body.Close()
 
-	return FilterResponse{FilteredText:string(responseData), Context:context, DocumentId:documentId}
+	return FilterResponse{FilteredText: string(responseData), Context: context, DocumentId: documentId}
 
 }
 
-func Explain(endpoint string, input string, context string, documentId string, filterProfile string) ExplainResponse {
+func Explain(endpoint string, input string, context string, documentId string, policy string) ExplainResponse {
 
 	var text = []byte(input)
 
@@ -148,7 +150,7 @@ func Explain(endpoint string, input string, context string, documentId string, f
 	params := url.Values{}
 	params.Add("c", context)
 	params.Add("d", documentId)
-	params.Add("p", filterProfile)
+	params.Add("p", policy)
 
 	base.RawQuery = params.Encode()
 
@@ -179,9 +181,9 @@ func Explain(endpoint string, input string, context string, documentId string, f
 
 }
 
-func GetFilterProfileNames(endpoint string) []string {
+func GetPolicyNames(endpoint string) []string {
 
-	request, err := http.NewRequest("GET", endpoint + "/api/profiles", nil)
+	request, err := http.NewRequest("GET", endpoint+"/api/policies", nil)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -210,9 +212,9 @@ func GetFilterProfileNames(endpoint string) []string {
 
 }
 
-func GetFilterProfile(endpoint string, name string) string {
+func GetPolicy(endpoint string, name string) string {
 
-	request, err := http.NewRequest("GET", endpoint + "/api/profiles/" + name, nil)
+	request, err := http.NewRequest("GET", endpoint+"/api/policies/"+name, nil)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -238,10 +240,10 @@ func GetFilterProfile(endpoint string, name string) string {
 
 }
 
-func UploadFilterProfile(endpoint string, name string, content string) bool {
+func UploadPolicy(endpoint string, name string, content string) bool {
 
 	var json = []byte(content)
-	request, err := http.NewRequest("POST", endpoint + "/api/profiles", bytes.NewBuffer(json))
+	request, err := http.NewRequest("POST", endpoint+"/api/policies", bytes.NewBuffer(json))
 
 	request.Header.Set("Content-Type", "application/json")
 
@@ -264,9 +266,9 @@ func UploadFilterProfile(endpoint string, name string, content string) bool {
 
 }
 
-func DeleteFilterProfile(endpoint string, name string, content string) bool {
+func DeletePolicy(endpoint string, name string, content string) bool {
 
-	request, err := http.NewRequest("DELETE", endpoint + "/api/profiles", nil)
+	request, err := http.NewRequest("DELETE", endpoint+"/api/policies", nil)
 
 	client := &http.Client{}
 
